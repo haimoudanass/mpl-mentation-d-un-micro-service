@@ -1,0 +1,154 @@
+{
+  "info": {
+    "name": "Bank Account Microservice",
+    "description": "Collection REST pour tester le micro-service de comptes bancaires (vidéo Youssfi).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "accountId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "REST /api",
+      "item": [
+        {
+          "name": "Lister les comptes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bankAccounts"
+          }
+        },
+        {
+          "name": "Consulter un compte",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bankAccounts/{{accountId}}"
+          }
+        },
+        {
+          "name": "Créer un compte",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) { pm.collectionVariables.set('accountId', json.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"balance\": 8000,\n  \"currency\": \"EUR\",\n  \"type\": \"SAVING_ACCOUNT\"\n}"
+            },
+            "url": "{{baseUrl}}/api/bankAccounts"
+          }
+        },
+        {
+          "name": "Mettre à jour un compte",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"USD\"\n}"
+            },
+            "url": "{{baseUrl}}/api/bankAccounts/{{accountId}}"
+          }
+        },
+        {
+          "name": "Supprimer un compte",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/bankAccounts/{{accountId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Spring Data REST",
+      "item": [
+        {
+          "name": "HAL - liste paginée",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/bankAccounts?page=0&size=2"
+          }
+        },
+        {
+          "name": "Recherche byType",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/bankAccounts/search/byType?t=CURRENT_ACCOUNT"
+          }
+        },
+        {
+          "name": "Projection p1",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/bankAccounts?projection=p1"
+          }
+        },
+        {
+          "name": "Projection p2",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/bankAccounts?projection=p2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "item": [
+        {
+          "name": "accountsList",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { accountsList { id balance currency type customer { name } } }\"\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          }
+        },
+        {
+          "name": "addAccount",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation($bankAccount: BankAccountDTO) { addAccount(bankAccount: $bankAccount) { id balance currency type } }\",\n  \"variables\": {\n    \"bankAccount\": {\n      \"balance\": 4000,\n      \"currency\": \"USD\",\n      \"type\": \"CURRENT_ACCOUNT\"\n    }\n  }\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          }
+        }
+      ]
+    }
+  ]
+}

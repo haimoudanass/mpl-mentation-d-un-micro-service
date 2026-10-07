@@ -1,0 +1,43 @@
+### API REST manuelle
+GET http://localhost:8081/api/bankAccounts
+
+###
+POST http://localhost:8081/api/bankAccounts
+Content-Type: application/json
+
+{
+  "balance": 8000,
+  "currency": "EUR",
+  "type": "SAVING_ACCOUNT"
+}
+
+###
+GET http://localhost:8081/api/bankAccounts/{{accountId}}
+
+###
+PUT http://localhost:8081/api/bankAccounts/{{accountId}}
+Content-Type: application/json
+
+{
+  "currency": "USD"
+}
+
+###
+DELETE http://localhost:8081/api/bankAccounts/{{accountId}}
+
+### Spring Data REST
+GET http://localhost:8081/bankAccounts?page=0&size=2
+
+###
+GET http://localhost:8081/bankAccounts/search/byType?t=CURRENT_ACCOUNT
+
+###
+GET http://localhost:8081/bankAccounts?projection=p1
+
+### GraphQL
+POST http://localhost:8081/graphql
+Content-Type: application/json
+
+{
+  "query": "query { accountsList { id balance currency type customer { name } } }"
+}
